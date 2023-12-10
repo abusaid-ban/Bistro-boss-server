@@ -25,6 +25,7 @@ async function run() {
     try {
         const menuCollection = client.db("bistroDb").collection("menu");
         const reviewsCollection = client.db("bistroDb").collection("reviews");
+        const cartCollection = client.db("bistroDb").collection("carts");
 
         app.get('/menu', async (req, res) => {
             const result = await menuCollection.find().toArray();
@@ -35,6 +36,14 @@ async function run() {
             const result = await reviewsCollection.find().toArray();
             res.send(result);
 
+        })
+
+        // cart collection
+        app.post("/carts",async (req,res) =>{
+            const item = req.body;
+            console.log(item);
+            const result = await cartCollection.insertOne(item);
+            res.send(result);
         })
 
         // Connect the client to the server	(optional starting in v4.7)
@@ -51,9 +60,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Boss is running')
+    res.send('Kitchen is running')
 })
 app.listen(port, () => {
-    console.log(`Bistro Boss is running on port: ${port}`);
+    console.log(`Roadside Kitchen is running on port: ${port}`);
 
 })
