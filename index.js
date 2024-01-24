@@ -24,14 +24,25 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         const menuCollection = client.db("bistroDb").collection("menu");
+        const usersCollection = client.db("bistroDb").collection("users");
         const reviewsCollection = client.db("bistroDb").collection("reviews");
         const cartCollection = client.db("bistroDb").collection("carts");
 
+        // users related apis
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.send(result);
+        })
+
+        // menu related apis
         app.get('/menu', async (req, res) => {
             const result = await menuCollection.find().toArray();
             res.send(result);
 
         })
+
+        // review related apis
         app.get('/reviews', async (req, res) => {
             const result = await reviewsCollection.find().toArray();
             res.send(result);
@@ -40,26 +51,26 @@ async function run() {
 
         // cart collection
         app.get('/carts', async (req, res) => {
-           const email = req.query.email;
-           if(!email){
-            res.send([])
-           }
-        const query = {email : email} ;
-        const result = await cartCollection.find(query).toArray();
-        res.send(result);
+            const email = req.query.email;
+            if (!email) {
+                res.send([])
+            }
+            const query = { email: email };
+            const result = await cartCollection.find(query).toArray();
+            res.send(result);
         })
 
 
-        app.post("/carts",async (req,res) =>{
+        app.post("/carts", async (req, res) => {
             const item = req.body;
             // console.log(item);
             const result = await cartCollection.insertOne(item);
             res.send(result);
         })
-        app.delete("/carts/:id",async (req,res) =>{
+        app.delete("/carts/:id", async (req, res) => {
             const id = req.params.id
-           const query = {_id :new ObjectId(id)}
-           const result = await cartCollection.deleteOne(query);
+            const query = { _id: new ObjectId(id) }
+            const result = await cartCollection.deleteOne(query);
             res.send(result);
         })
 
